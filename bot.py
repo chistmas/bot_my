@@ -86,6 +86,11 @@ def text_handler(message):
         
     elif message.text == 'Main menu':
         menu.main_menu(bot, message.chat.id)
+        
+    else:
+        msg = "This is not one of my functions, do you wanna piss me off?!?!"
+        msg_out = bot.send_message(message.chat.id, msg)
+
     
 def ask_phone_number(message):
     phone_number = message.text
