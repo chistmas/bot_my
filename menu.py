@@ -1,4 +1,5 @@
 from telebot import types
+import json
 
 
 def money_menu(bot, chat_id):
@@ -41,4 +42,19 @@ def payment_menu(bot, chat_id):
     payment_menu_buttons.add(mobile, internet, back)
     bot.send_message(chat_id, 'Choose a payment', 
                      reply_markup=payment_menu_buttons)
-
+    
+def card_menu(bot, chat_id, card_sum = 0):
+    payment_menu_buttons = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    
+    file_client = f'.\\storage\\{chat_id}.json'
+    with open(file_client, 'r') as file:
+        client = json.load(file)
+    cards = client['cards']
+    for item in cards.items():
+        if int(item[1]['amount']) >= card_sum:
+            tmp_card = types.KeyboardButton(f"{item[0]}: {item[1]['amount']} {item[1]['currency']}")
+            payment_menu_buttons.add(tmp_card)
+        
+    main_menu_button = types.KeyboardButton('Main menu')
+    payment_menu_buttons.add(main_menu_button)
+    return bot.send_message(chat_id, 'Сhoose a card with which you will pay', reply_markup=payment_menu_buttons)

@@ -17,6 +17,7 @@ class Payment:
         self.payment_type = payment_type
         self.payment_detail = ''
         self.payment_amount = 0.0
+        self.payment_card = ''
 
 
 @bot.message_handler(commands=['start'])
@@ -88,7 +89,7 @@ def text_handler(message):
         menu.main_menu(bot, message.chat.id)
         
     else:
-        msg = "This is not one of my functions, do you wanna piss me off?!?!"
+        msg = "This is not one of my functions, do you want try one more time?"
         msg_out = bot.send_message(message.chat.id, msg)
 
     
@@ -150,11 +151,21 @@ def ask_internet_sum(message):
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
     payment.payment_sum = internet_sum
+    msg_out = menu.card_menu(bot, message.chat.id)
+    bot.register_next_step_handler(msg_out, ask_card_num)
+
+def ask_card_num(message):
+    telegram_id = message.chat.id
+    payment = user_payment[telegram_id]
+
+    message.text.find(':')
+    payment_card  = message.text[0: message.text.find(':')]
+    payment.payment_card = payment_card
+    
+# funcc that draws money
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
     msg += f"{payment.payment_detail} \n{payment.payment_sum}"
-    msg_out = bot.send_message(message.chat.id, msg)
-    
-    
+    msg_out = bot.send_message(message.chat.id, msg)    
     
 # always the last
 bot.polling()
