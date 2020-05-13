@@ -17,7 +17,17 @@ class Payment:
         self.payment_type = payment_type
         self.payment_detail = ''
         self.payment_amount = 0.0
+        self.card_number = 0
 
+
+user_card = {}
+class Card:
+    def __init__(self,telegram_id,card_num,amount=0,currency='BY',number='0000'):
+        self.telegram_id = telegram_id
+        self.amount=amount
+        self.currency = currency
+        self.card_num = card_num
+        self.number = number
 
 @bot.message_handler(commands=['start'])
 def start_handler(message):
@@ -70,7 +80,7 @@ def text_handler(message):
         payment_type = message.text
         payment = Payment(telegram_id, payment_type)
         user_payment[telegram_id] = payment
-        
+
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_phone_number)
         
@@ -145,11 +155,22 @@ def ask_internet_sum(message):
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
     payment.payment_sum = internet_sum
-    msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
-    msg += f"{payment.payment_detail} \n{payment.payment_sum}"
+    msg_out = menu.card_menu(bot,message.chat.id, payment.payment_sum)
+    bot.register_next_step_handler(msg_out,ask_card)
+    
+def ask_card(message):
+    telegram_id = message.chat.id
+    payment = user_payment[telegram_id]
+
+    card_num = message.text[:message.text.find(':')]
+    payment.card_number =card_num
+
+    #card.subtracting_from_card(bot, message.chat.id, user_card.number, user_payment.payment_sum)
+
+    msg = f'Thank you \n You payed for {payment.payment_type} sum: {payment.payment_sum} by number: {payment.phone_number} '
     msg_out = bot.send_message(message.chat.id, msg)
-    
-    
-    
+
+
+
 # always the last
 bot.polling()
