@@ -16,7 +16,7 @@ class Payment:
         self.telegram_id = telegram_id
         self.payment_type = payment_type
         self.payment_detail = ''
-        self.payment_amount = 0.0
+        self.payment_sum = 0.0
         self.payment_card = ''
 
 
@@ -153,6 +153,7 @@ def ask_internet_sum(message):
     payment.payment_sum = internet_sum
     msg_out = menu.card_menu(bot, message.chat.id)
     bot.register_next_step_handler(msg_out, ask_card_num)
+    
 
 def ask_card_num(message):
     telegram_id = message.chat.id
@@ -161,7 +162,7 @@ def ask_card_num(message):
     message.text.find(':')
     payment_card  = message.text[0: message.text.find(':')]
     payment.payment_card = payment_card
-    
+    card.subtracting_from_card(bot, telegram_id, payment.payment_card, int(payment.payment_sum))
 # funcc that draws money
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
     msg += f"{payment.payment_detail} \n{payment.payment_sum}"
