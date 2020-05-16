@@ -18,6 +18,8 @@ class Payment:
         self.payment_detail = ''
         self.payment_amount = 0.0
         self.card_number = 0
+        self.payment_card = ''
+
 
 
 user_card = {}
@@ -96,6 +98,11 @@ def text_handler(message):
         
     elif message.text == 'Main menu':
         menu.main_menu(bot, message.chat.id)
+        
+    else:
+        msg = "This is not one of my functions, do you want try one more time?"
+        msg_out = bot.send_message(message.chat.id, msg)
+
     
 def ask_phone_number(message):
     phone_number = message.text
@@ -155,22 +162,22 @@ def ask_internet_sum(message):
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
     payment.payment_sum = internet_sum
-    msg_out = menu.card_menu(bot,message.chat.id, payment.payment_sum)
-    bot.register_next_step_handler(msg_out,ask_card)
-    
-def ask_card(message):
+    msg_out = menu.card_menu(bot, message.chat.id)
+    bot.register_next_step_handler(msg_out, ask_card_num)
+
+
+def ask_card_num(message):
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
 
-    card_num = message.text[:message.text.find(':')]
-    payment.card_number =card_num
+    message.text.find(':')
+    payment_card = message.text[0: message.text.find(':')]
+    payment.payment_card = payment_card
+    card.subtracting_from_card(bot, telegram_id, payment_card, int(payment.payment_amount))
 
-    #card.subtracting_from_card(bot, message.chat.id, user_card.number, user_payment.payment_sum)
-
-    msg = f'Thank you \n You payed for {payment.payment_type} sum: {payment.payment_sum} by number: {payment.phone_number} '
+    msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
+    msg += f"{payment.payment_detail} \n{payment.payment_sum}"
     msg_out = bot.send_message(message.chat.id, msg)
-
-
 
 # always the last
 bot.polling()
