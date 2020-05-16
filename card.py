@@ -42,9 +42,10 @@ def get_cards(telegram_id):
 
 def subtracting_from_card(bot,telegram_id,number,amount):
     file_client = f'.\\storage\\{telegram_id}.json'
-    with open(file_client,'w') as file:
+    with open(file_client, 'r') as file:
         client = json.load(file)
-        card = client['cards']
-        for item in card.item():
-            if number == item[0]:
-                item[1]['amount'] -= amount
+    card = client['cards'][number]
+    card['amount'] -= amount
+
+    with open(file_client, 'w') as file:
+        json.dump(client, file, indent=4, sort_keys=True)
