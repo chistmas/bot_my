@@ -134,10 +134,9 @@ def ask_phone_sum(message):
     
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
-    payment.payment_sum = phone_sum
-    msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
-    msg += f"{payment.payment_detail} \n{payment.payment_sum}"
-    msg_out = bot.send_message(message.chat.id, msg)
+    payment.payment_amount = phone_sum
+    msg_out = menu.card_menu(bot, message.chat.id, int(payment.payment_amount))
+    bot.register_next_step_handler(msg_out, ask_card_num)
     
 def ask_internet_number(message):
     internet_number = message.text
