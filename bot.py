@@ -2,12 +2,11 @@ import telebot
 import config
 import menu
 import money
+import card
+from datetime import datetime
+
 
 bot = telebot.TeleBot(config.TOKEN)
-
-import menu 
-import card
-import money
 
 user_payment = {}
 
@@ -16,24 +15,10 @@ class Payment:
         self.telegram_id = telegram_id
         self.payment_type = payment_type
         self.payment_detail = ''
-
-        self.payment_amount = 0.0
-        self.card_number = 0
-
         self.payment_sum = 0.0
-
         self.payment_card = ''
+        self.payment_date = ''
 
-
-
-user_card = {}
-class Card:
-    def __init__(self,telegram_id,card_num,amount=0,currency='BY',number='0000'):
-        self.telegram_id = telegram_id
-        self.amount=amount
-        self.currency = currency
-        self.card_num = card_num
-        self.number = number
 
 @bot.message_handler(commands=['start'])
 def start_handler(message):
@@ -86,7 +71,7 @@ def text_handler(message):
         payment_type = message.text
         payment = Payment(telegram_id, payment_type)
         user_payment[telegram_id] = payment
-
+        
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_phone_number)
         
@@ -169,21 +154,19 @@ def ask_internet_sum(message):
     bot.register_next_step_handler(msg_out, ask_card_num)
     
 
-
 def ask_card_num(message):
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
 
     message.text.find(':')
-    payment_card = message.text[0: message.text.find(':')]
+    payment_card  = message.text[0: message.text.find(':')]
     payment.payment_card = payment_card
-    card.subtracting_from_card(bot, telegram_id, payment_card, int(payment.payment_amount))
-
+    payment.payment_date = datetime.now()
     card.subtracting_from_card(bot, telegram_id, payment.payment_card, int(payment.payment_sum))
 # funcc that draws money
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
-    msg += f"{payment.payment_detail} \n{payment.payment_sum}"
-    msg_out = bot.send_message(message.chat.id, msg)
-
+    msg += f"{payment.payment_detail} \n{payment.payment_sum}\n{payment.payment_date}"
+    msg_out = bot.send_message(message.chat.id, msg)    
+    
 # always the last
 bot.polling()

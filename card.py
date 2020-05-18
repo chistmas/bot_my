@@ -2,6 +2,16 @@ import random
 import os.path
 import json
 
+user_card = {}
+class Card:
+    def __init__(self,telegram_id,card_num,amount=0,currency='BY',number='0000'):
+        self.telegram_id = telegram_id
+        self.amount=amount
+        self.currency = currency
+        self.card_num = card_num
+        self.number = number
+        
+        
 def new_card(telegram_id, amount=500, currency='BYR'):
     card_num = ' '.join([str(i) for i in
                          [random.randint(1000, 9999) for i in range(4)]])
