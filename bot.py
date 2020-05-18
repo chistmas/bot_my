@@ -2,12 +2,11 @@ import telebot
 import config
 import menu
 import money
+import card
+from datetime import datetime
+
 
 bot = telebot.TeleBot(config.TOKEN)
-
-import menu 
-import card
-import money
 
 user_payment = {}
 
@@ -18,6 +17,7 @@ class Payment:
         self.payment_detail = ''
         self.payment_sum = 0.0
         self.payment_card = ''
+        self.payment_date = ''
 
 
 @bot.message_handler(commands=['start'])
@@ -162,10 +162,11 @@ def ask_card_num(message):
     message.text.find(':')
     payment_card  = message.text[0: message.text.find(':')]
     payment.payment_card = payment_card
+    payment.payment_date = datetime.now()
     card.subtracting_from_card(bot, telegram_id, payment.payment_card, int(payment.payment_sum))
 # funcc that draws money
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
-    msg += f"{payment.payment_detail} \n{payment.payment_sum}"
+    msg += f"{payment.payment_detail} \n{payment.payment_sum}\n{payment.payment_date}"
     msg_out = bot.send_message(message.chat.id, msg)    
     
 # always the last
