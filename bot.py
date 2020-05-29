@@ -96,17 +96,22 @@ def text_handler(message):
         
     elif message.text == 'Main menu':
         menu.main_menu(bot, message.chat.id)
-    
+
     elif message.text == 'Transfer from card to card':
-        msg = 'Сhoose a card from which you want to transfer money'
+
+        msg = 'Enter amount you want to transfer'
+
         telegram_id = message.chat.id
+
         payment_type = message.text
+
         payment = Payment(telegram_id, payment_type)
+
         user_payment[telegram_id] = payment
-        
-        msg_out = menu.card_menu(bot, message.chat.id,int(payment.payment_sum))
-        bot.register_next_step_handler(msg_out, ask_card)
-        
+
+        msg_out = bot.send_message(message.chat.id, msg)
+
+        bot.register_next_step_handler(msg_out, ask_card_sum)
                 
     else:
         msg = "This is not one of my functions, do you want try one more time?"
@@ -209,37 +214,56 @@ def ask_card_num2(message):
     card.save(telegram_id, payment.payment_card, int(payment.payment_sum), ['phone', payment.payment_detail])
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
     msg += f"{payment.payment_detail} \n{payment.payment_sum}\n{payment.payment_date}"
-    msg_out = bot.send_message(message.chat.id, msg)    
-    
+    msg_out = bot.send_message(message.chat.id, msg)
+
+
+def ask_card_sum(message):
+    card_sum = message.text
+    if not card_sum.isdigit():
+        msg = "Amount must be a number"
+        msg_out = bot.send_message(message.chat.id, msg)
+        bot.register_next_step_handler(msg_out, ask_card_sum)
+        return
+
+    telegram_id = message.chat.id
+    payment = user_payment[telegram_id]
+    payment.payment_amount = card_sum
+
+    msg = 'Сhoose a card from which you want to transfer money'
+    bot.send_message(message.chat.id, msg)
+
+    msg_out = menu.card_menu(bot, message.chat.id, int(payment.payment_amount))
+    bot.register_next_step_handler(msg_out, ask_card)
+
+
 def ask_card(message):
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
-    
+
     message.text.find(':')
     payment_card = message.text[0: message.text.find(':')]
     payment.payment_card = payment_card
-    card.subtracting_from_card(bot,telegram_id,payment_card,int(payment.payment_sum))
-    
-    
+
+    card.subtracting_from_card(bot, telegram_id, payment_card, int(payment.payment_amount))
+
     msg = 'Сhoose a card on which you want to transfer money'
-    msg_out = menu.card_menu(bot, message.chat.id,int(payment.payment_sum))
-    
+    msg_out = bot.send_message(message.chat.id, msg)
     bot.register_next_step_handler(msg_out, ask_card_adding)
 
 
 def ask_card_adding(message):
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
-    
+
     message.text.find(':')
     payment_card = message.text[0: message.text.find(':')]
     payment.payment_card = payment_card
-    card.subtracting_from_card(bot,telegram_id,payment_card, -int(payment.payment_sum))
-    
-    
+    card.subtracting_from_card(bot, telegram_id, payment_card, -int(payment.payment_amount))
+
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
-    msg += f"Sum is {payment.payment_sum}"
+    msg += f"Sum is {payment.payment_amount}"
     msg_out = bot.send_message(message.chat.id, msg)
+
 
 # always the last
 bot.polling()
