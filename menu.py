@@ -32,35 +32,33 @@ def main_menu(bot, chat_id):
                           new_card_button, transfer_button)
     bot.send_message(chat_id, 'Choose operation',
                      reply_markup=main_menu_buttons)
-
-
+    
 def payment_menu(bot, chat_id):
     payment_menu_buttons = types.ReplyKeyboardMarkup(row_width=1,
-                                                     resize_keyboard=True)
-
+                                                  resize_keyboard=True)
+    
     mobile = types.KeyboardButton('Mobile phone')
     internet = types.KeyboardButton('The Internet')
-    my_payments = types.KeyboardButton('My payments')
+    in_inf = types.KeyboardButton('Internet history')
+    ph_inf = types.KeyboardButton('Phone history')
     back = types.KeyboardButton('Main menu')
-
-    payment_menu_buttons.add(mobile, internet, my_payments, back)
-    bot.send_message(chat_id, 'Choose a payment',
+    
+    payment_menu_buttons.add(mobile, internet, in_inf, ph_inf, back)
+    bot.send_message(chat_id, 'Choose a payment', 
                      reply_markup=payment_menu_buttons)
 
-
-def card_menu(bot, chat_id, card_sum=0):
+def card_menu(bot, chat_id, card_sum = 0):
     payment_menu_buttons = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     file_client = f'.\\storage\\{chat_id}.json'
     with open(file_client, 'r') as file:
         client = json.load(file)
     cards = client['cards']
     for item in cards.items():
-        if int(item[1]['amount']) >= card_sum:
+        if  int(item[1]['amount'])>=card_sum:
             tmp_card = types.KeyboardButton(f"{item[0]}: {item[1]['amount']} {item[1]['currency']}")
             payment_menu_buttons.add(tmp_card)
-    back = types.KeyboardButton('Main menu')
-    payment_menu_buttons.add(back)
+    main_menu_button = types.KeyboardButton('Main menu')
+    payment_menu_buttons.add(main_menu_button)
 
     msg_out = bot.send_message(chat_id, 'Сhoose a card with which you will pay', reply_markup=payment_menu_buttons)
     return msg_out
-
