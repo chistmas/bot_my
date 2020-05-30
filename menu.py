@@ -62,3 +62,14 @@ def card_menu(bot, chat_id, card_sum = 0):
 
     msg_out = bot.send_message(chat_id, 'Сhoose a card with which you will pay', reply_markup=payment_menu_buttons)
     return msg_out
+
+def state_menu(bot, chat_id):
+    state_menu_buttons = types.ReplyKeyboardMarkup(row_width=1,
+                                                     resize_keyboard=True)
+    fine = types.KeyboardButton("Fine")
+    good = types.KeyboardButton("Good")
+    bad = types.KeyboardButton("Bad")
+    m_menu = types.KeyboardButton("Main menu")
+    state_menu_buttons.add(good, fine, bad, m_menu)
+    bot.send_message(chat_id, 'I\'m fine, and you?', 
+                     reply_markup=state_menu_buttons)

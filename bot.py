@@ -57,9 +57,12 @@ def text_handler(message):
     elif message.text == 'My cards':
         msg = ''
         cards = card.get_cards(message.chat.id)
-        for item in cards.items():
-            msg += f"{item[0]} \ Balance is: {item[1]['amount']}"
-            msg += f"{item[1]['currency']}\n"
+        if cards == "No":
+            msg = 'You don\'t have any payments. Make one, please.'
+        else:
+            for item in cards.items():
+                msg += f"{item[0]} \ Balance is: {item[1]['amount']}"
+                msg += f"{item[1]['currency']}\n"
         msg_out = bot.send_message(message.chat.id, msg)
 
     elif message.text == 'Payments':
@@ -109,13 +112,34 @@ def text_handler(message):
         menu.main_menu(bot, message.chat.id)
 
     elif message.text == "Internet history":
-        a.ris_in(message.chat.id)
-        bot.send_photo(message.chat.id, photo=open('to.png', 'rb'))
+        ch = a.ris_in(message.chat.id)
+        if ch == 'No':
+            msg = "'You don\'t have any payments. Make one, please.'"
+            bot.send_message(message.chat.id, msg)
+        else:
+            bot.send_photo(message.chat.id, photo=open('to.png', 'rb'))
 
     elif message.text == "Phone history":
-        a.ris_ph(message.chat.id)
-        bot.send_photo(message.chat.id, photo=open('to.png', 'rb'))
-
+        ch = a.ris_ph(message.chat.id)
+        if ch == 'No':
+            msg = "'You don\'t have any payments. Make one, please.'"
+            bot.send_message(message.chat.id, msg)
+        else:
+            bot.send_photo(message.chat.id, photo=open('to.png', 'rb'))
+            
+    elif message.text == "How are you?" or message.text == "how are you?":
+        menu.state_menu(bot, message.chat.id)
+    
+    elif message.text == "Good":
+        msg = "That's great!"
+        msg_out = bot.send_message(message.chat.id, msg)
+    elif message.text == "fine":
+        msg = "That's good!"
+        msg_out = bot.send_message(message.chat.id, msg)
+    elif message.text == "Bad":
+        msg = "That's pity :("
+        msg_out = bot.send_message(message.chat.id, msg)
+        
     else:
         msg = "This is not one of my functions, do you want try one more time?"
         msg_out = bot.send_message(message.chat.id, msg)
@@ -267,6 +291,8 @@ def ask_card_adding(message):
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
     msg += f"Sum is {payment.payment_amount}"
     msg_out = bot.send_message(message.chat.id, msg)
+
+
 
 
 # always the last
