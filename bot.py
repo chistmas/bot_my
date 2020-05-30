@@ -26,6 +26,8 @@ def start_handler(message):
     msg = 'Hallo, nice to meet you'
     msg_out = bot.send_message(message.chat.id, msg)
     menu.main_menu(bot, message.chat.id)
+    bot.send_sticker(message.chat.id,
+                     'CAACAgIAAxkBAALkol7SyB5mKbDNttoXDpNTD9zihqqaAAK4AAPA-wgAAU2SSZjfsZSOGQQ')
 
 
 @bot.message_handler(content_types=['text'])
@@ -133,16 +135,28 @@ def text_handler(message):
     elif message.text == "Good":
         msg = "That's great!"
         msg_out = bot.send_message(message.chat.id, msg)
+        bot.send_sticker(message.chat.id,
+                         'CAACAgIAAxkBAALknF7SxyEeNSoqF0AO-ORPpQXnZfPSAAK-AAPA-wgAATOm199GeyTCGQQ')
     elif message.text == "fine":
         msg = "That's good!"
         msg_out = bot.send_message(message.chat.id, msg)
+        bot.send_sticker(message.chat.id,
+                         'CAACAgIAAxkBAALknl7Sx0JwhcrZVTSE9cjL1jMRbRwwAAK4AAPA-wgAAU2SSZjfsZSOGQQ')
     elif message.text == "Bad":
         msg = "That's pity :("
         msg_out = bot.send_message(message.chat.id, msg)
+        bot.send_sticker(message.chat.id,
+                         'CAACAgIAAxkBAALkml7SxtDgkSSWG3Npao86XQABu31W-wACsgADwPsIAAG3N0lDb_MWnBkE')
+
+        
+    elif message.text == "fairness" or message.text == "Fairness":
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAALkmF7SxVU8xv6BVOkXp-CBxk2byP3wAALVAAMiNJ4GWwdzhOsiSDoZBA')
         
     else:
         msg = "This is not one of my functions, do you want try one more time?"
         msg_out = bot.send_message(message.chat.id, msg)
+        bot.send_sticker(message.chat.id,
+                         'CAACAgIAAxkBAALkoF7Sx29uYLRZmpkTs081jWn9sN7_AAK6AAPA-wgAAZJvD72Lo0lLGQQ')
 
 
 def ask_phone_number(message):
