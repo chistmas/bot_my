@@ -5,10 +5,10 @@ import money
 import card
 from datetime import datetime
 
-
 bot = telebot.TeleBot(config.TOKEN)
 
 user_payment = {}
+
 
 class Payment:
     def __init__(self, telegram_id, payment_type):
@@ -30,22 +30,22 @@ def start_handler(message):
 @bot.message_handler(content_types=['text'])
 def text_handler(message):
     if message.text == 'Exchange rates':
-        menu.money_menu(bot,message.chat.id)
+        menu.money_menu(bot, message.chat.id)
     elif message.text == 'Dollar':
-        usd_in = money.usd_in(bot,message.chat.id)
+        usd_in = money.usd_in(bot, message.chat.id)
         usd_out = money.usd_out(bot, message.chat.id)
     elif message.text == 'Euro':
-        eur_in = money.eur_in(bot,message.chat.id)
+        eur_in = money.eur_in(bot, message.chat.id)
         eur_out = money.eur_out(bot, message.chat.id)
     elif message.text == 'Russian ruble':
-        rub_in = money.rub_in(bot,message.chat.id)
-        rub_out = money.rub_out(bot,message.chat.id)
+        rub_in = money.rub_in(bot, message.chat.id)
+        rub_out = money.rub_out(bot, message.chat.id)
     elif message.text == 'Zloty':
         zl_in = money.zl_in(bot, message.chat.id)
-        zl_out = money.zl_out(bot,message.chat.id)
+        zl_out = money.zl_out(bot, message.chat.id)
     elif message.text == 'Uan':
         un_in = money.un_in(bot, message.chat.id)
-        un_out = money.un_out(bot,message.chat.id)
+        un_out = money.un_out(bot, message.chat.id)
 
     elif message.text == 'New card':
         new_card = card.new_card(message.chat.id)
@@ -63,14 +63,14 @@ def text_handler(message):
 
     elif message.text == 'Payments':
         menu.payment_menu(bot, message.chat.id)
-        
+
     elif message.text == 'My payments':
-        msg =''
+        msg = ''
         payments = card.get_pay(message.chat.id)
         for item in payments.items():
             msg += f"{item[0]} \nCard: {item[1]['card']}\nAmount: "
-            msg+=f" {item[1]['amount']}\nType of: {item[1]['type_of']}"
-            msg+=f"\nAccount number: {item[1]['details']}\n\n"
+            msg += f" {item[1]['amount']}\nType of: {item[1]['type_of']}"
+            msg += f"\nAccount number: {item[1]['details']}\n\n"
         msg_out = bot.send_message(message.chat.id, msg)
 
 
@@ -80,44 +80,38 @@ def text_handler(message):
         payment_type = message.text
         payment = Payment(telegram_id, payment_type)
         user_payment[telegram_id] = payment
-        
+
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_phone_number)
-        
+
     elif message.text == 'The Internet':
         msg = "Enter your payment account number"
         telegram_id = message.chat.id
         payment_type = message.text
         payment = Payment(telegram_id, payment_type)
         user_payment[telegram_id] = payment
-        
+
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_internet_number)
-        
+
+
+    elif message.text == 'Transfer from card to card':
+        msg = 'Enter amount you want to transfer'
+        telegram_id = message.chat.id
+        payment_type = message.text
+        payment = Payment(telegram_id, payment_type)
+        user_payment[telegram_id] = payment
+        msg_out = bot.send_message(message.chat.id, msg)
+        bot.register_next_step_handler(msg_out, ask_card_sum)
+
     elif message.text == 'Main menu':
         menu.main_menu(bot, message.chat.id)
 
-    elif message.text == 'Transfer from card to card':
-
-        msg = 'Enter amount you want to transfer'
-
-        telegram_id = message.chat.id
-
-        payment_type = message.text
-
-        payment = Payment(telegram_id, payment_type)
-
-        user_payment[telegram_id] = payment
-
-        msg_out = bot.send_message(message.chat.id, msg)
-
-        bot.register_next_step_handler(msg_out, ask_card_sum)
-                
     else:
         msg = "This is not one of my functions, do you want try one more time?"
         msg_out = bot.send_message(message.chat.id, msg)
 
-    
+
 def ask_phone_number(message):
     phone_number = message.text
     if not phone_number.isdigit():
@@ -125,15 +119,16 @@ def ask_phone_number(message):
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_phone_number)
         return
-    
+
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
     payment.payment_detail = phone_number
-    
+
     msg = "Enter amount"
     msg_out = bot.send_message(message.chat.id, msg)
     bot.register_next_step_handler(msg_out, ask_phone_sum)
-    
+
+
 def ask_phone_sum(message):
     phone_sum = message.text
     if not phone_sum.isdigit():
@@ -141,16 +136,14 @@ def ask_phone_sum(message):
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_phone_sum)
         return
-    
+
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
     payment.payment_sum = phone_sum
     msg_out = menu.card_menu(bot, message.chat.id)
     bot.register_next_step_handler(msg_out, ask_card_num2)
-    msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
-    msg += f"{payment.payment_detail} \n{payment.payment_sum}"
-    msg_out = bot.send_message(message.chat.id, msg)
-    
+
+
 def ask_internet_number(message):
     internet_number = message.text
     if not internet_number.isdigit():
@@ -158,15 +151,16 @@ def ask_internet_number(message):
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_internet_number)
         return
-    
+
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
     payment.payment_detail = internet_number
-    
+
     msg = "Enter amount"
     msg_out = bot.send_message(message.chat.id, msg)
     bot.register_next_step_handler(msg_out, ask_internet_sum)
-    
+
+
 def ask_internet_sum(message):
     internet_sum = message.text
     if not internet_sum.isdigit():
@@ -174,13 +168,13 @@ def ask_internet_sum(message):
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_internet_sum)
         return
-    
+
     telegram_id = message.chat.id
     payment = user_payment[telegram_id]
     payment.payment_sum = internet_sum
     msg_out = menu.card_menu(bot, message.chat.id)
     bot.register_next_step_handler(msg_out, ask_card_num)
-    
+
 
 def ask_card_num(message):
     now = datetime.now()
@@ -189,16 +183,17 @@ def ask_card_num(message):
     payment = user_payment[telegram_id]
 
     message.text.find(':')
-    payment_card  = message.text[0: message.text.find(':')]
+    payment_card = message.text[0: message.text.find(':')]
     payment.payment_card = payment_card
     payment.payment_date = date_time
     card.subtracting_from_card(bot, telegram_id, payment.payment_card, int(payment.payment_sum))
-# funcc that draws money
+    # funcc that draws money
     card.save(telegram_id, payment.payment_card, int(payment.payment_sum), ['internet', payment.payment_detail])
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
     msg += f"{payment.payment_detail} \n{payment.payment_sum}\n{payment.payment_date}"
-    msg_out = bot.send_message(message.chat.id, msg)    
-    
+    msg_out = bot.send_message(message.chat.id, msg)
+
+
 def ask_card_num2(message):
     now = datetime.now()
     date_time = now.strftime("%m/%d/%Y,%H:%M:%S")
@@ -206,11 +201,11 @@ def ask_card_num2(message):
     payment = user_payment[telegram_id]
 
     message.text.find(':')
-    payment_card  = message.text[0: message.text.find(':')]
+    payment_card = message.text[0: message.text.find(':')]
     payment.payment_card = payment_card
     payment.payment_date = date_time
     card.subtracting_from_card(bot, telegram_id, payment.payment_card, int(payment.payment_sum))
-# funcc that draws money
+    # funcc that draws money
     card.save(telegram_id, payment.payment_card, int(payment.payment_sum), ['phone', payment.payment_detail])
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
     msg += f"{payment.payment_detail} \n{payment.payment_sum}\n{payment.payment_date}"
