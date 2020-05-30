@@ -107,6 +107,14 @@ def text_handler(message):
     elif message.text == 'Main menu':
         menu.main_menu(bot, message.chat.id)
 
+    elif message.text == "Internet history":
+        a.ris_in(message.chat.id)
+        bot.send_photo(message.chat.id, photo=open('to.png', 'rb'))
+
+    elif message.text == "Phone history":
+        a.ris_ph(message.chat.id)
+        bot.send_photo(message.chat.id, photo=open('to.png', 'rb'))
+
     else:
         msg = "This is not one of my functions, do you want try one more time?"
         msg_out = bot.send_message(message.chat.id, msg)
