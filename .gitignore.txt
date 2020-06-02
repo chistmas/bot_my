@@ -1,4 +1,0 @@
-.idea/
-git_test.txt
-text.txt
-tim.
