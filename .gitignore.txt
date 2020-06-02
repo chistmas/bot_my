@@ -2,4 +2,3 @@
 git_test.txt
 text.txt
 tim.
-config.py
