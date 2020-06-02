@@ -63,7 +63,7 @@ def text_handler(message):
             msg = 'You don\'t have any payments. Make one, please.'
         else:
             for item in cards.items():
-                msg += f"{item[0]} \ Balance is: {item[1]['amount']}"
+                msg += f"{item[0]} \n Balance is: {item[1]['amount']}"
                 msg += f"{item[1]['currency']}\n"
         msg_out = bot.send_message(message.chat.id, msg)
 
