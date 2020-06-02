@@ -8,8 +8,9 @@ def ris_in(telegram_id):
     if os.path.exists(file_client):
         with open(file_client) as file:
             client = json.load(file)
+    else:
+        return 'No'
 
-    
     date = client['date']
     ar = []
     co = []
@@ -32,7 +33,8 @@ def ris_ph(telegram_id):
         with open(file_client) as file:
             client = json.load(file)
 
-    
+    else:
+        return 'No'
     date = client['date']
     ar = []
     co = []
@@ -53,3 +55,5 @@ def ris_ph(telegram_id):
         ax.plot(co, ar)
         fig.savefig('to.png')   # save the figure to file
         plt.close(fig)
+
+

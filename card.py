@@ -98,4 +98,4 @@ def get_cards(telegram_id):
             client = json.load(file)
             
         return client['cards']
-    return {'error': 'You don\'t have any cards. Make one, please.'}
+    return 'No'
