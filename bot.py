@@ -63,7 +63,7 @@ def text_handler(message):
             msg = 'You don\'t have any payments. Make one, please.'
         else:
             for item in cards.items():
-                msg += f"{item[0]} \n Balance is: {item[1]['amount']}"
+                msg += f"{item[0]} \ Balance is: {item[1]['amount']}"
                 msg += f"{item[1]['currency']}\n"
         msg_out = bot.send_message(message.chat.id, msg)
 
@@ -116,16 +116,20 @@ def text_handler(message):
     elif message.text == "Internet history":
         ch = a.ris_in(message.chat.id)
         if ch == 'No':
-            msg = "'You don\'t have any payments. Make one, please.'"
+            msg = "You don\'t have any payments. Make one, please."
             bot.send_message(message.chat.id, msg)
+            bot.send_sticker(message.chat.id,
+                             'CAACAgIAAxkBAALnjF7Y3AaMj-Ubvaixdj9bYsvLnF44AALNAAPA-wgAAQxCO1jnClgYGgQ')
         else:
             bot.send_photo(message.chat.id, photo=open('to.png', 'rb'))
 
     elif message.text == "Phone history":
         ch = a.ris_ph(message.chat.id)
         if ch == 'No':
-            msg = "'You don\'t have any payments. Make one, please.'"
+            msg = "You don\'t have any payments. Make one, please."
             bot.send_message(message.chat.id, msg)
+            bot.send_sticker(message.chat.id,
+                             'CAACAgIAAxkBAALnjF7Y3AaMj-Ubvaixdj9bYsvLnF44AALNAAPA-wgAAQxCO1jnClgYGgQ')
         else:
             bot.send_photo(message.chat.id, photo=open('to.png', 'rb'))
             
@@ -137,7 +141,7 @@ def text_handler(message):
         msg_out = bot.send_message(message.chat.id, msg)
         bot.send_sticker(message.chat.id,
                          'CAACAgIAAxkBAALknF7SxyEeNSoqF0AO-ORPpQXnZfPSAAK-AAPA-wgAATOm199GeyTCGQQ')
-    elif message.text == "fine":
+    elif message.text == "Fine":
         msg = "That's good!"
         msg_out = bot.send_message(message.chat.id, msg)
         bot.send_sticker(message.chat.id,
