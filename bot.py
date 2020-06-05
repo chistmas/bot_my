@@ -55,6 +55,7 @@ def text_handler(message):
         msg = f"Card was successfuly created\n"
         msg += f"Card number is: {new_card['card_num']}"
         msg_out = bot.send_message(message.chat.id, msg)
+        menu.main_menu(bot, message.chat.id)
 
     elif message.text == 'My cards':
         msg = ''
@@ -66,6 +67,7 @@ def text_handler(message):
                 msg += f"{item[0]} \ Balance is: {item[1]['amount']}"
                 msg += f"{item[1]['currency']}\n"
         msg_out = bot.send_message(message.chat.id, msg)
+        menu.main_menu(bot, message.chat.id)
 
     elif message.text == 'Payments':
         menu.payment_menu(bot, message.chat.id)
@@ -73,11 +75,19 @@ def text_handler(message):
     elif message.text == 'My payments':
         msg = ''
         payments = card.get_pay(message.chat.id)
-        for item in payments.items():
-            msg += f"{item[0]} \nCard: {item[1]['card']}\nAmount: "
-            msg += f" {item[1]['amount']}\nType of: {item[1]['type_of']}"
-            msg += f"\nAccount number: {item[1]['details']}\n\n"
-        msg_out = bot.send_message(message.chat.id, msg)
+        if payments == "No":
+            msg = "You don\'t have any payments. Make one, please."
+            bot.send_message(message.chat.id, msg)
+            bot.send_sticker(message.chat.id,
+                             'CAACAgIAAxkBAALnjF7Y3AaMj-Ubvaixdj9bYsvLnF44AALNAAPA-wgAAQxCO1jnClgYGgQ')
+            menu.main_menu(bot, message.chat.id)
+        else:
+            for item in payments.items():
+                msg += f"{item[0]} \nCard: {item[1]['card']}\nAmount: "
+                msg += f" {item[1]['amount']}\nType of: {item[1]['type_of']}"
+                msg += f"\nAccount number: {item[1]['details']}\n\n"
+            msg_out = bot.send_message(message.chat.id, msg)
+            menu.main_menu(bot, message.chat.id)
 
 
     elif message.text == 'Mobile phone':
@@ -120,8 +130,10 @@ def text_handler(message):
             bot.send_message(message.chat.id, msg)
             bot.send_sticker(message.chat.id,
                              'CAACAgIAAxkBAALnjF7Y3AaMj-Ubvaixdj9bYsvLnF44AALNAAPA-wgAAQxCO1jnClgYGgQ')
+            menu.main_menu(bot, message.chat.id)
         else:
             bot.send_photo(message.chat.id, photo=open('to.png', 'rb'))
+            menu.main_menu(bot, message.chat.id)
 
     elif message.text == "Phone history":
         ch = a.ris_ph(message.chat.id)
@@ -130,8 +142,10 @@ def text_handler(message):
             bot.send_message(message.chat.id, msg)
             bot.send_sticker(message.chat.id,
                              'CAACAgIAAxkBAALnjF7Y3AaMj-Ubvaixdj9bYsvLnF44AALNAAPA-wgAAQxCO1jnClgYGgQ')
+            menu.main_menu(bot, message.chat.id)
         else:
             bot.send_photo(message.chat.id, photo=open('to.png', 'rb'))
+            menu.main_menu(bot, message.chat.id)
             
     elif message.text == "How are you?" or message.text == "how are you?":
         menu.state_menu(bot, message.chat.id)
@@ -141,21 +155,22 @@ def text_handler(message):
         msg_out = bot.send_message(message.chat.id, msg)
         bot.send_sticker(message.chat.id,
                          'CAACAgIAAxkBAALknF7SxyEeNSoqF0AO-ORPpQXnZfPSAAK-AAPA-wgAATOm199GeyTCGQQ')
+        menu.main_menu(bot, message.chat.id)
     elif message.text == "Fine":
         msg = "That's good!"
         msg_out = bot.send_message(message.chat.id, msg)
         bot.send_sticker(message.chat.id,
                          'CAACAgIAAxkBAALknl7Sx0JwhcrZVTSE9cjL1jMRbRwwAAK4AAPA-wgAAU2SSZjfsZSOGQQ')
+        menu.main_menu(bot, message.chat.id)
     elif message.text == "Bad":
         msg = "That's pity :("
         msg_out = bot.send_message(message.chat.id, msg)
         bot.send_sticker(message.chat.id,
                          'CAACAgIAAxkBAALkml7SxtDgkSSWG3Npao86XQABu31W-wACsgADwPsIAAG3N0lDb_MWnBkE')
-
-        
+        menu.main_menu(bot, message.chat.id)   
     elif message.text == "fairness" or message.text == "Fairness":
         bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAALkmF7SxVU8xv6BVOkXp-CBxk2byP3wAALVAAMiNJ4GWwdzhOsiSDoZBA')
-        
+        menu.main_menu(bot, message.chat.id)   
     else:
         msg = "This is not one of my functions, do you want try one more time?"
         msg_out = bot.send_message(message.chat.id, msg)
@@ -165,66 +180,78 @@ def text_handler(message):
 
 def ask_phone_number(message):
     phone_number = message.text
-    if not phone_number.isdigit():
+    if phone_number == 'Main menu':
+        msg = 'Operation canceled'
+        msg_out = bot.send_message(message.chat.id, msg)
+    elif not phone_number.isdigit():
         msg = "Wrong format"
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_phone_number)
         return
-
-    telegram_id = message.chat.id
-    payment = user_payment[telegram_id]
-    payment.payment_detail = phone_number
-
-    msg = "Enter amount"
-    msg_out = bot.send_message(message.chat.id, msg)
-    bot.register_next_step_handler(msg_out, ask_phone_sum)
+    else:
+        telegram_id = message.chat.id
+        payment = user_payment[telegram_id]
+        payment.payment_detail = phone_number
+    
+        msg = "Enter amount"
+        msg_out = bot.send_message(message.chat.id, msg)
+        bot.register_next_step_handler(msg_out, ask_phone_sum)
 
 
 def ask_phone_sum(message):
     phone_sum = message.text
-    if not phone_sum.isdigit():
+    if phone_sum == 'Main menu':
+        msg = 'Operation canceled'
+        msg_out = bot.send_message(message.chat.id, msg)
+    elif not phone_sum.isdigit():
         msg = "Amount must be a number"
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_phone_sum)
         return
-
-    telegram_id = message.chat.id
-    payment = user_payment[telegram_id]
-    payment.payment_sum = phone_sum
-    msg_out = menu.card_menu(bot, message.chat.id)
-    bot.register_next_step_handler(msg_out, ask_card_num2)
+    else:
+        telegram_id = message.chat.id
+        payment = user_payment[telegram_id]
+        payment.payment_sum = phone_sum
+        msg_out = menu.card_menu(bot, message.chat.id)
+        bot.register_next_step_handler(msg_out, ask_card_num2)
 
 
 def ask_internet_number(message):
     internet_number = message.text
-    if not internet_number.isdigit():
+    if internet_number == 'Main menu':
+        msg = 'Operation canceled'
+        msg_out = bot.send_message(message.chat.id, msg)
+    elif not internet_number.isdigit():
         msg = "Wrong format"
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_internet_number)
         return
-
-    telegram_id = message.chat.id
-    payment = user_payment[telegram_id]
-    payment.payment_detail = internet_number
-
-    msg = "Enter amount"
-    msg_out = bot.send_message(message.chat.id, msg)
-    bot.register_next_step_handler(msg_out, ask_internet_sum)
+    else:
+        telegram_id = message.chat.id
+        payment = user_payment[telegram_id]
+        payment.payment_detail = internet_number
+    
+        msg = "Enter amount"
+        msg_out = bot.send_message(message.chat.id, msg)
+        bot.register_next_step_handler(msg_out, ask_internet_sum)
 
 
 def ask_internet_sum(message):
     internet_sum = message.text
-    if not internet_sum.isdigit():
+    if internet_sum == 'Main menu':
+        msg = 'Operation canceled'
+        msg_out = bot.send_message(message.chat.id, msg)
+    elif not internet_sum.isdigit():
         msg = "Amount must be a number"
         msg_out = bot.send_message(message.chat.id, msg)
         bot.register_next_step_handler(msg_out, ask_internet_sum)
         return
-
-    telegram_id = message.chat.id
-    payment = user_payment[telegram_id]
-    payment.payment_sum = internet_sum
-    msg_out = menu.card_menu(bot, message.chat.id)
-    bot.register_next_step_handler(msg_out, ask_card_num)
+    else:
+        telegram_id = message.chat.id
+        payment = user_payment[telegram_id]
+        payment.payment_sum = internet_sum
+        msg_out = menu.card_menu(bot, message.chat.id)
+        bot.register_next_step_handler(msg_out, ask_card_num)
 
 
 def ask_card_num(message):
@@ -243,6 +270,7 @@ def ask_card_num(message):
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
     msg += f"{payment.payment_detail} \n{payment.payment_sum}\n{payment.payment_date}"
     msg_out = bot.send_message(message.chat.id, msg)
+    menu.main_menu(bot, message.chat.id)
 
 
 def ask_card_num2(message):
@@ -261,6 +289,7 @@ def ask_card_num2(message):
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
     msg += f"{payment.payment_detail} \n{payment.payment_sum}\n{payment.payment_date}"
     msg_out = bot.send_message(message.chat.id, msg)
+    menu.main_menu(bot, message.chat.id)
 
 
 def ask_card_sum(message):
@@ -309,6 +338,7 @@ def ask_card_adding(message):
     msg = f"Thanks!\nUser: {payment.telegram_id}\n{payment.payment_type}:\n"
     msg += f"Sum is {payment.payment_amount}"
     msg_out = bot.send_message(message.chat.id, msg)
+    menu.main_menu(bot, message.chat.id)
 
 
 

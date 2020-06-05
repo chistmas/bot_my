@@ -89,7 +89,7 @@ def get_pay(telegram_id):
             client = json.load(file)
             
         return client['date']
-    return {'error': 'You don\'t have any payments. Make one, please.'}
+    return "No"
 
 def get_cards(telegram_id):
     file_client = f'.\\storage\\{telegram_id}.json' 
@@ -98,4 +98,4 @@ def get_cards(telegram_id):
             client = json.load(file)
             
         return client['cards']
-    return 'No'
+    return {'error': 'You don\'t have any cards. Make one, please.'}

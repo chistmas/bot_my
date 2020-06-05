@@ -41,9 +41,10 @@ def payment_menu(bot, chat_id):
     internet = types.KeyboardButton('The Internet')
     in_inf = types.KeyboardButton('Internet history')
     ph_inf = types.KeyboardButton('Phone history')
+    pays = types.KeyboardButton('My payments')
     back = types.KeyboardButton('Main menu')
     
-    payment_menu_buttons.add(mobile, internet, in_inf, ph_inf, back)
+    payment_menu_buttons.add(mobile, internet, in_inf, ph_inf,pays, back)
     bot.send_message(chat_id, 'Choose a payment', 
                      reply_markup=payment_menu_buttons)
 
